@@ -1,3 +1,5 @@
+require_relative './simple_rule_engine/rule'
+
 class SimpleRuleEngine
   @@rules = []
 
@@ -13,5 +15,19 @@ class SimpleRuleEngine
     @@rules.each_with_object([]) do |rule, obj|
       obj << { name: rule.name, priority: rule.priority }
     end
+  end
+
+  def self.reset_rules!
+    @@rules = []
+  end
+
+  def self.call(object)
+    object_copy = object.dup
+
+    @@rules.each do |rule|
+      rule.execute(object_copy)
+    end
+
+    object_copy
   end
 end
