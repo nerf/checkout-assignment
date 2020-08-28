@@ -46,4 +46,39 @@ RSpec.describe SimpleRuleEngine::Rule do
       expect(subject.priority).to eq(100)
     end
   end
+
+  describe '#execute' do
+    before do
+      subject.when do |obj|
+        obj.length == 2
+      end
+      subject.when do |obj|
+        obj[0] == 1
+      end
+      subject.then do |obj|
+        obj[0] = 'changed'
+      end
+      subject.then do |obj|
+        obj[1] = 'changed'
+      end
+
+      subject.execute(object)
+    end
+
+    context 'with matching rules' do
+      let(:object) { [1, 2] }
+
+      it 'applies mutations' do
+        expect(object).to eq(%w(changed changed))
+      end
+    end
+
+    context 'without matching rules' do
+      let(:object) { [2, 3] }
+
+      it 'mutations are not applied' do
+        expect(object).to eq([2, 3])
+      end
+    end
+  end
 end
