@@ -1,6 +1,8 @@
 class SimpleRuleEngine
   class Rule
 
+    attr_accessor :name, :priority
+
     def initialize
       @name = nil
       @priority = 0

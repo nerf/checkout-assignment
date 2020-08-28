@@ -30,4 +30,20 @@ RSpec.describe SimpleRuleEngine::Rule do
       end.to raise_error(ArgumentError)
     end
   end
+
+  describe '#name' do
+    it 'can be set' do
+      subject.name = 'Foo rule'
+
+      expect(subject.name).to eq('Foo rule')
+    end
+  end
+
+  describe '#priority' do
+    it 'can be set' do
+      subject.priority = 100
+
+      expect(subject.priority).to eq(100)
+    end
+  end
 end
