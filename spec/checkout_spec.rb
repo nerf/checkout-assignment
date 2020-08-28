@@ -1,6 +1,9 @@
 require './src/checkout'
 
 class DummyRules
+  def self.call(items)
+    items
+  end
 end
 
 Item = Struct.new(:price)
@@ -18,7 +21,7 @@ RSpec.describe Checkout do
   end
 
   describe '#total' do
-    let(:item1) { Item.new 10.5 }
+    let(:item1) { Item.new 10.501 }
     let(:item2) { Item.new 20.0 }
 
     before do

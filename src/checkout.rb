@@ -9,7 +9,7 @@ class Checkout
   end
 
   def total
-    items.inject(0) { |total, i| total += i.price }
+    rules.call(items).inject(0) { |total, i| total += i.price }.round(2)
   end
 
   private

@@ -22,12 +22,20 @@ class SimpleRuleEngine
   end
 
   def self.call(object)
-    object_copy = object.dup
+    object_copy = deep_dup(object)
 
     @@rules.each do |rule|
       rule.execute(object_copy)
     end
 
     object_copy
+  end
+
+  def self.deep_dup(obj)
+    if obj.is_a?(Array)
+      obj.map(&:dup)
+    else
+      obj.dup
+    end
   end
 end
