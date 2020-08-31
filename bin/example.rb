@@ -4,10 +4,12 @@ require_relative '../src/item'
 require_relative '../src/checkout'
 require_relative '../src/simple_rule_engine'
 
-# Helpers
-def subtract_percentage(number, percentage)
-  number - ((number / 100) * percentage)
-end
+UNKNOWN_PRODUCT = "Item with product code: `%s` does not exists."
+HELP = <<-EOF
+  Example usage:
+    `#{$0} 001 002 003 001`
+    `#{$0} 001,002,003`
+EOF
 
 # Add dummy data
 AVAILABLE_ITEMS = {
@@ -16,8 +18,21 @@ AVAILABLE_ITEMS = {
   '003' => Item.new(product_code: '003', name: 'Kids T-shirt', price: 19.95)
 }
 
+# Helpers
+def subtract_percentage(number, percentage)
+  number - ((number / 100) * percentage)
+end
+
+def get_arguments_list
+  abort(HELP) if ARGV.empty?
+
+  ARGV.length > 1 ? ARGV : ARGV.first.split(',')
+end
+
 # Add rules
-SimpleRuleEngine.add_rule do |rule|
+rules = SimpleRuleEngine.new
+
+rules.add_rule do |rule|
   rule.name = 'Discount for orders over £60'
   rule.priority = 100
   rule.when do |items|
@@ -30,7 +45,7 @@ SimpleRuleEngine.add_rule do |rule|
   end
 end
 
-SimpleRuleEngine.add_rule do |rule|
+rules.add_rule do |rule|
   rule.name = 'Lavender hearts discount'
   rule.priority = 10
   rule.when do |items|
@@ -43,16 +58,19 @@ SimpleRuleEngine.add_rule do |rule|
   end
 end
 
-checkout = Checkout.new(SimpleRuleEngine)
-ARGV.each do |key|
-  if AVAILABLE_ITEMS.key?(key)
-    item = AVAILABLE_ITEMS[key]
+# Init checkout
+checkout = Checkout.new(rules)
 
-    puts "Adding item: #{item.name} - #{item.price}"
-    checkout.scan(item)
-  else
-    exit "Item with product code: `#{key}` does not exists."
-  end
+# Add items to checkout
+get_arguments_list.each do |product_code|
+  abort(UNKNOWN_PRODUCT % product_code) unless AVAILABLE_ITEMS.key?(product_code)
+
+  item = AVAILABLE_ITEMS[product_code]
+
+  puts "Adding item: #{item.name} - #{item.price}"
+
+  checkout.scan(item)
 end
 
+# Get order total
 puts "Your order total is: £#{checkout.total}"
