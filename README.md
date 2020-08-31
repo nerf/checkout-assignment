@@ -30,7 +30,8 @@
 To add rule
 
 ```
-  SimpleRuleEngine.add_rule do |rule|
+  rules = SimpleRuleEngine.new
+  rules.add_rule do |rule|
     rule.name = 'Lavender hearts discount'
     rule.priority = 10
     rule.when do |items|
@@ -47,18 +48,17 @@ To add rule
 List rules
 
 ```
-  SimpleRuleEngine.list_rules # [{name: 'Rule', priority: 1}]
+  rules.list_rules # [{name: 'Rule', priority: 1}]
 ```
 
 Reset/clear rules
 
 ```
-  SimpleRuleEngine.reset_rules!
+  rules.reset_rules!
 ```
 
 Execute rules
 
 ```
-  SimpleRuleEngine.call(objects_to_be_processed)
+  rules.call(objects_to_be_processed)
 ```
-
