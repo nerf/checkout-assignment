@@ -27,10 +27,15 @@ RSpec.describe Checkout do
     before do
       subject.scan(item1)
       subject.scan(item2)
+
+      allow(DummyRules).to receive(:call).and_call_original
     end
 
     it 'returns sum of items prices' do
-      expect(subject.total).to eq(30.5)
+      expected_result = (item1.price + item2.price).round(2)
+
+      expect(subject.total).to eq(expected_result)
+      expect(DummyRules).to have_received(:call).with([item1, item2])
     end
   end
 end

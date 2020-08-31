@@ -1,11 +1,11 @@
 require './src/simple_rule_engine'
 
 RSpec.describe SimpleRuleEngine do
-  subject { described_class }
+  subject { described_class.new }
 
   before { subject.reset_rules! }
 
-  describe '.add_rule' do
+  describe '#add_rule' do
     before do
       subject.add_rule do |rule|
         rule.name = 'Foo'
@@ -21,6 +21,23 @@ RSpec.describe SimpleRuleEngine do
       expected_result = [
         { name: 'Bar', priority: 1 },
         { name: 'Foo', priority: 10 },
+      ]
+
+      expect(subject.list_rules).to eq(expected_result)
+    end
+  end
+
+  describe '#list_rules' do
+    before do
+      subject.add_rule do |rule|
+        rule.name = 'Foo'
+        rule.priority = 100
+      end
+    end
+
+    it 'returns added rules information' do
+      expected_result = [
+        { name: 'Foo', priority: 100 }
       ]
 
       expect(subject.list_rules).to eq(expected_result)
